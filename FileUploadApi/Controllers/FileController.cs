@@ -2,6 +2,10 @@
 using FileUploadApi.Dto_s;
 using FileUploadApi.Services.ServiceResponse;
 using Microsoft.AspNetCore.Mvc;
+using static System.Net.Mime.MediaTypeNames;
+using System.IO;
+using System.Net.Sockets;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace FileUploadApi.Controllers
 {
@@ -33,5 +37,23 @@ namespace FileUploadApi.Controllers
                 return BadRequest(response);
             return Ok(response);
         }
+
+        [HttpGet("download/{filename}")]
+        public async Task<IActionResult> DowloadFile(string filename)
+        {
+            
+            var result = await _fileService.downloadFile(filename);//Waiting the result
+            var contentType = new FileExtensionContentTypeProvider();//ContentType to download 
+
+            if (!contentType.TryGetContentType(result.FileType, out var defaultType))//Getting the ContentType 
+            {
+                defaultType = "application/octet-stream";//ContentType by default
+            }
+
+            if(result.Error == true)
+                return BadRequest(result);
+            return File(result.Memory,defaultType, Path.GetFileName(result.Path));//Returning and Downloading the file
+        }
+    
     }
 }

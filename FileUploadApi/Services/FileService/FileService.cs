@@ -3,7 +3,7 @@ using FileUploadApi.Data;
 using FileUploadApi.Dto_s;
 using FileUploadApi.Services.ServiceResponse;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
+
 
 namespace FileUploadApi.Services.FileService
 {
@@ -18,6 +18,34 @@ namespace FileUploadApi.Services.FileService
             _env = webHostEnvironment;
             _context = fileContext;
             _mapper = mapper;
+        }
+
+        public async Task<FileDownload> downloadFile(string filename)
+        {
+            try
+            {
+                //Getting the file by the name
+                var fileResult = await _context.imageUploads.Where(x => x.OriginalName == filename).FirstOrDefaultAsync();
+                //The first who find it will return 
+
+                //Getting the path to download
+                var path = Path.Combine(_env.ContentRootPath, "Upload", $"{fileResult.FileName}{fileResult.FileType}");
+
+                var memory = new MemoryStream();
+                using (var stream = new FileStream(path, FileMode.Open)) //Open the file and saving it
+                {
+                    await stream.CopyToAsync(memory);//Copy in the memory
+
+                }
+                memory.Position = 0;//In the first position is save
+
+                return new FileDownload() { FileName = fileResult.OriginalName, FileType = fileResult.FileType, Memory = memory, Path = path };
+                //Saving it in the FileDownload model.
+
+            } catch (Exception e)
+            {
+                return new FileDownload() {Error = true }; 
+            }
         }
 
         public async Task<ServiceResponse<List<ImageUploadDTO>>> getAll()

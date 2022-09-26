@@ -8,5 +8,6 @@ namespace FileUploadApi.Services.FileService
     {
       Task<ServiceResponse<List<ImageUploadDTO>>> getAll();
       Task<ServiceResponse<List<ImageUpload>>> UploadFile([FromForm]List<IFormFile> files);
+      Task<FileDownload> downloadFile(string filename);
     }
 }
