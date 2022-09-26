@@ -1,4 +1,6 @@
-﻿using FileUploadApi.Data;
+﻿using AutoMapper;
+using FileUploadApi.Data;
+using FileUploadApi.Dto_s;
 using FileUploadApi.Services.ServiceResponse;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -9,15 +11,18 @@ namespace FileUploadApi.Services.FileService
     {
         private readonly IWebHostEnvironment _env;
         private readonly FileContext _context;
-        public FileService(IWebHostEnvironment webHostEnvironment, FileContext fileContext)
+        private readonly IMapper _mapper;
+
+        public FileService(IWebHostEnvironment webHostEnvironment, FileContext fileContext,IMapper mapper)
         {
             _env = webHostEnvironment;
             _context = fileContext;
+            _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<List<ImageUpload>>> getAll()
+        public async Task<ServiceResponse<List<ImageUploadDTO>>> getAll()
         {
-            return new ServiceResponse<List<ImageUpload>>() { Data = await _context.imageUploads.ToListAsync() };
+            return new ServiceResponse<List<ImageUploadDTO>>() { Data = await _context.imageUploads.Select(res => _mapper.Map<ImageUploadDTO>(res)).ToListAsync()};
         }
 
         public async Task<ServiceResponse<List<ImageUpload>>> UploadFile([FromForm] List<IFormFile> files)
@@ -45,7 +50,7 @@ namespace FileUploadApi.Services.FileService
                     //Adding the result
                     ImageResult.FileName = fileName;
                     ImageResult.FilePath = path;
-                    ImageResult.OrginalName = realName;
+                    ImageResult.OriginalName = realName;
                     ImageResult.FileType = extension;
                     ImageResult.CreationDate = dateTime;
 

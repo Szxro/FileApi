@@ -9,7 +9,7 @@ namespace FileUploadApi.Models
 
         public string? FilePath { get; set; }
 
-        public string? OrginalName { get; set; } = null;
+        public string OriginalName { get; set; } = string.Empty;
 
         public string? FileType { get; set; }
 

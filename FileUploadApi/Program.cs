@@ -15,7 +15,7 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddDbContext<FileContext>(m => {
     m.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
-
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
 

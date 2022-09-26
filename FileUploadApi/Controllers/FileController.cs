@@ -1,4 +1,6 @@
-﻿using FileUploadApi.Services.ServiceResponse;
+﻿using AutoMapper;
+using FileUploadApi.Dto_s;
+using FileUploadApi.Services.ServiceResponse;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileUploadApi.Controllers
@@ -9,13 +11,13 @@ namespace FileUploadApi.Controllers
     {
        private readonly IFileService _fileService;
 
-        public FileController(IFileService fileService)
+        public FileController(IFileService fileService,IMapper mapper)
         {
-            _fileService = fileService; 
+            _fileService = fileService;
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<ServiceResponse<List<ImageUpload>>>> getAll()
+        public async Task<ActionResult<ServiceResponse<List<ImageUploadDTO>>>> getAll()
         {
             var response = await _fileService.getAll();
             if (response == null)

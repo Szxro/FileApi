@@ -42,7 +42,8 @@ namespace FileUploadApi.Migrations
                     b.Property<string>("FileType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("OrginalName")
+                    b.Property<string>("OriginalName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
